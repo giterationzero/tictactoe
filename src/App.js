@@ -1,5 +1,31 @@
 import { useState } from 'react';
 
+export default function Game() {
+  const [symbol, setSymbol] = useState("X");
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const currentSquares = history[history.length - 1];
+  function handlePlay(nextSquares) {
+    if (symbol == "X") {
+      setSymbol("O");
+    } else {
+      setSymbol("X");
+    }
+    setHistory([...history,nextSquares]);
+  }
+  return(
+    <div className='game'>
+      <div className='game-board'>
+        <Board symbol={symbol} squares={currentSquares} onPlay={handlePlay}/>
+      </div>
+      <div className='game-info'>
+        <ol>
+          {"TODO"}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 export function Square({value, onSquareClick}) {
   return (
     <button
@@ -11,22 +37,18 @@ export function Square({value, onSquareClick}) {
   );
 }
 
-export default function Board() {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [symbol, setSymbol] = useState("X");
+export function Board({symbol, squares, onPlay}) {
   function handleClick(i) {
     const nextSquares = squares.slice();
     if (nextSquares[i] != null || declareWinner(nextSquares) != null) {
-      return
+      return;
     }
-    const currentSymbol = symbol;
-    if (currentSymbol === "X") {
-      setSymbol("O");
+    if (symbol === "X") {
+      nextSquares[i]="O"
     } else {
-      setSymbol("X");
+      nextSquares[i]="X"
     }
-    nextSquares[i]=currentSymbol;
-    setSquares(nextSquares);
+    onPlay(nextSquares);
   }
 
   const winner = declareWinner(squares);
